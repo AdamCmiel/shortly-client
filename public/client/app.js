@@ -32,8 +32,8 @@ app.controller('LinksController', function($scope, $http){
     method: "GET",
     url: "/links"
   })
-  .then(function(data, status){
-    $scope.links = data;
+  .then(function(obj){
+    $scope.links = obj.data;
   })
   .catch(function(err, status){
     $console.log('err', err);
@@ -42,8 +42,8 @@ app.controller('LinksController', function($scope, $http){
 });
 
 app.controller('ShortenController', function($scope, $http){
-  $http({
-    method: "POST",
-    url: "/links"
-  })
+  // $http({
+  //   method: "POST",
+  //   url: "/links"
+  // })
 });

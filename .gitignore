@@ -1,3 +1,4 @@
 angular/
 angular-route/
 *.swp
+npm-debug.log
