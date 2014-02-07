@@ -1,4 +1,20 @@
-<div ng-controller='nameController'>
-  <input ng-model='name' type="text" placeholder="type your name here...">
-  <h1>Hello {{name}}</h1>
+<div>  
+  <h1>Shortly App</h1>
+  <div class="navigation">
+    <ul>
+      <li><a href="#/">All Links</a></li>
+      <li><a href="#/create">Shorten</a></li>
+    </ul>
+  </div>
+</div>
+
+<div ng-controller="LinksController">
+  <ul>
+    <li ng-repeat="link in links">
+      {{link.title}}
+      <a ng-href="/{{link.code}}">
+        /{{link.code}}
+      </a>
+    </li>
+  </ul>
 </div>
