@@ -106,21 +106,11 @@ post '/links' do
     puts data.inspect
     uri = URI(data['url'])
 
-    #Tring to extract Facebook og:image url from head, but appears to be variance btw websites
-    #og_image_url = read_url_head(uri).match(/image. content=.(.*)./)
-    og_image_url = nil
-    unless og_image_url.nil?
-      og_image_url = og_image_url[1]
-    end
-
     raise Sinatra::NotFound unless uri.absolute?
     #user = User.find_by username: data[:username]
-    user = User.find_by_username(data["username"])
-    puts "Should puts user row: #{user.inspect}"
-    link = Link.find_by_url(uri.to_s) ||  Link.create( url: uri.to_s, title: get_url_title(uri), user_id: user.id, image: og_image_url)
-    puts "Link row: #{link.inspect}"
-    #link.user_id = user.id
-    #link.save
+    # user = User.find_by_username(data["username"])
+
+    link = Link.find_by_url(uri.to_s) ||  Link.create(url: uri.to_s, title: get_url_title(uri))# user_id: user.id)
 
     link.as_json.merge(base_url: request.base_url).to_json
 end

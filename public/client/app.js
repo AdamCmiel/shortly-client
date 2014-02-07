@@ -9,15 +9,16 @@ app.run(function($rootScope){
 
 // ------------- Create App Routes -------------- //
 
-app.config(function($routeProvider){
+app.config(function($routeProvider, $locationProvider){
+  $locationProvider.html5Mode(true);
   $routeProvider
     .when('/', {
       controller: 'LinksController',
       templateUrl: "/templates/home.html"
     })
-    .when('/shorten', {
+    .when('/create', {
       controller: 'ShortenController',
-      templateUrl: "/templates/home.html"
+      templateUrl: "/templates/create.html"
     })
     .otherwise({
       redirectTo: '/'
@@ -31,15 +32,18 @@ app.controller('LinksController', function($scope, $http){
     method: "GET",
     url: "/links"
   })
-  .success(function(data, status){
+  .then(function(data, status){
     $scope.links = data;
   })
-  .error(function(err, status){
+  .catch(function(err, status){
     $console.log('err', err);
     $scope.links = 'There was an error';
   });
 });
 
 app.controller('ShortenController', function($scope, $http){
-
+  $http({
+    method: "POST",
+    url: "/links"
+  })
 });
