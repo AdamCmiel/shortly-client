@@ -1,6 +1,6 @@
 <div ng-controller="ShortenController">
-  <form action="/links" method="POST">
-    <input name='url' type='url'>
-    <button type='submit'>Submit</button>
+  <form>
+    Link to shorten: <input type='url' ng-model='link.url'>
+    <button ng-click='shortenLink()'>Submit</button>
   </form>
 </div>

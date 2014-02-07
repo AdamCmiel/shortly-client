@@ -42,8 +42,18 @@ app.controller('LinksController', function($scope, $http){
 });
 
 app.controller('ShortenController', function($scope, $http){
-  // $http({
-  //   method: "POST",
-  //   url: "/links"
-  // })
+  $scope.link = {url: null};
+  $scope.shortenLink = function(){
+    $http({
+      method: "POST",
+      url: "/links",
+      data: JSON.stringify($scope.link)
+    })
+    .then(function(obj){
+      console.log(obj);
+    })
+    .catch(function(obj){
+      console.log('err', obj);
+    });
+  };
 });
