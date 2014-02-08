@@ -92,6 +92,15 @@ get '/logout' do
   redirect "/"
 end
 
+before '/' do
+  if request.body.read.nil?
+  else
+    data = JSON.parse request.body.read 
+    token = Token.find_by data["token"]
+    halt 401, '401: Unauthorized Access, Please log in' if token.nil?
+  end
+end
+
 # Need to check authorization for these routes (Am I logged in?)
 
 get '/links' do

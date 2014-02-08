@@ -4,13 +4,8 @@ var app = angular.module("ShortlyApp", ['ngRoute']);
 
 // --------------- Do some stuff ---------------- //
 
-app.run(function($rootScope, $http){
-  $rootScope.logOut = function() {
-    $http({
-      method: "GET",
-      url: "/logout"
-    });
-  };
+app.run(function($rootScope, $http, AuthService){
+  $rootScope.logOut = AuthService.logout;
 });
 
 // ------------- Create App Routes -------------- //
@@ -103,7 +98,7 @@ app.service('UserService', function(){
   };
 });
 
-app.service('AuthService', function($http, UserService){
+app.service('AuthService', function($http, $window, $location, UserService){
   this.login = function(username, password) {
     return $http.post('/users/create', JSON.stringify({
       username: username,
@@ -112,5 +107,26 @@ app.service('AuthService', function($http, UserService){
   };
   this.logout = function() {
     UserService.setUser(null);
+    $location.path('/login');
+    // $window.location.href = '/login';
   };
+});
+
+app.service('AuthInterceptor', function($location, UserService){
+  return {
+    'request': function(request) {
+      request.token = UserService.getUser();
+      return request;
+    },
+    'responseError': function(rejection) {
+      if (rejection.status === 401) {
+        $location.path('/login');
+      }
+      return rejection;
+    }
+  };
+});
+
+app.config(function($httpProvider){
+  $httpProvider.interceptors.push('AuthInterceptor');
 });
