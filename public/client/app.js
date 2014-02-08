@@ -38,6 +38,7 @@ app.config(function($routeProvider, $locationProvider){
 // ---------- Write Controller Logic ------------ //
 
 app.controller('LinksController', function($scope, $http){
+
   $http({
     method: "GET",
     url: "/links"

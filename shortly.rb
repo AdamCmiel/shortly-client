@@ -119,7 +119,7 @@ get '/links' do
 
   links = Link.all
   links.map { |link|
-   link.as_json.merge(base_url: request.base_url)
+   link.as_json.merge(base_url: request.base_url, click: link.clicks.last)
   }.to_json
 
 end

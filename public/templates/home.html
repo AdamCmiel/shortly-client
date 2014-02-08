@@ -1,7 +1,13 @@
-<div ng-controller="LinksController">
+<div ng-controller="LinksController" ng-init="orderBy='visits'">
   Search by anything: <input type="text" ng-model="search" placeholder="i can find it" />
+  <label>Sort by:</label>
+  <button ng-click="orderBy='-visits'">visit count</button>
+  <button ng-click="orderBy='-created_at'">latest shortened</button>
+  <button ng-click="orderBy='-click.created_at'">last visited</button>
+  <button ng-click="reverse=false">&#8593;</button>
+  <button ng-click="reverse=true">&#8595;</button>
   <ul>
-    <li ng-repeat="link in links | filter: search | orderBy: '-visits' " >
+    <li ng-repeat="link in links | filter: search | orderBy:orderBy:reverse" >
       <a ng-href="/{{link.code}}">
         /{{link.code}}
       </a>
