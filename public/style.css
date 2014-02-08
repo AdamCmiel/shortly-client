@@ -135,3 +135,7 @@ form input[type=text] {
 .logout {
   visibility: hidden;
 }
+
+.red {
+  color: red;
+}

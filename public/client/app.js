@@ -54,18 +54,22 @@ app.controller('LinksController', function($scope, $http){
 
 app.controller('ShortenController', function($scope, $http){
   $scope.link = {url: null};
-  $scope.shortenLink = function(){
-    $http({
-      method: "POST",
-      url: "/links",
-      data: JSON.stringify($scope.link)
-    })
-    .then(function(obj){
-      console.log(obj);
-    })
-    .catch(function(obj){
-      console.log('err', obj);
-    });
+  $scope.shortenLink = function(url){
+    if (url.$valid){
+      $http({
+        method: "POST",
+        url: "/links",
+        data: JSON.stringify($scope.link)
+      })
+      .then(function(obj){
+        console.log(obj);
+      })
+      .catch(function(obj){
+        console.log('err', obj);
+      });
+    } else {
+      $scope.url_error_message = 'Why would you do that? Enter a real URL';
+    }
   };
 });
 

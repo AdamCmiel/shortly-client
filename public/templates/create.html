@@ -1,6 +1,7 @@
 <div ng-controller="ShortenController">
-  <form>
-    Link to shorten: <input type='url' ng-model='link.url'>
-    <button ng-click='shortenLink()'>Submit</button>
+  <label class='red'>{{url_error_message}}</label>
+  <form name="myForm">
+    Link to shorten: <input type='url' ng-model='link.url' name="url" required>
+    <button ng-click='shortenLink(myForm.url)'>Submit</button>
   </form>
 </div>
