@@ -1,6 +1,6 @@
 <div ng-controller="LinksController">
   <ul>
-    <li ng-repeat="link in links">
+    <li ng-repeat="link in links | orderBy: '-visits' " >
       <a ng-href="/{{link.code}}">
         /{{link.code}}
       </a>
