@@ -27,7 +27,7 @@ app.config(function($routeProvider, $locationProvider){
       templateUrl: "/templates/create.html"
     })
     .when('/login', {
-      controller: 'LoginController',
+      controller: 'FrameController',
       templateUrl: "/templates/login.html"
     })
     .otherwise({
@@ -73,23 +73,44 @@ app.controller('ShortenController', function($scope, $http){
   };
 });
 
-app.controller('LoginController', function($scope, $http, $location){
+app.controller('FrameController', function($scope, UserService, AuthService, $location){
+
   $scope.user = {
-    username: null,
+    username: UserService.getUser(),
     password: null
   };
-
   $scope.logIn = function() {
-    $http({
-      method: "POST",
-      url: "/users/create",
-      data: JSON.stringify($scope.user)
+   AuthService.login($scope.user.username, $scope.user.password)
+   .then(function(res){
+      if (res.status === 200) {
+        UserService.setUser(res.data.auth_code);
+        $location.path("/");
+      }
     })
-    .then(function(obj) {
-      $location.path("/");
-    })
-    .catch(function(obj) {
-      console.log(obj);
+    .catch(function(err){
+      console.log('err', err);
     });
+ };
+});
+
+app.service('UserService', function(){
+  var currentUser = null;
+  this.getUser = function(){
+    return currentUser;
+  };
+  this.setUser = function(u){
+    currentUser = u;
+  };
+});
+
+app.service('AuthService', function($http, UserService){
+  this.login = function(username, password) {
+    return $http.post('/users/create', JSON.stringify({
+      username: username,
+      password: password
+    }));
+  };
+  this.logout = function() {
+    UserService.setUser(null);
   };
 });
