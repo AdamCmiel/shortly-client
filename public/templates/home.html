@@ -1,10 +1,11 @@
 <div ng-controller="LinksController">
   <ul>
     <li ng-repeat="link in links">
-      {{link.title}}
       <a ng-href="/{{link.code}}">
-        {{link.code}}
+        /{{link.code}}
       </a>
+      {{link.title}}
+      {{ link.visits }} visits
     </li>
   </ul>
 </div>

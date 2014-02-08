@@ -4,6 +4,7 @@ require 'active_record'
 require 'digest/sha1'
 require 'pry'
 require 'uri'
+require 'bcrypt'
 require 'open-uri'
 # require 'nokogiri'
 
@@ -53,13 +54,19 @@ end
 class User < ActiveRecord::Base
   has_many :tokens
   has_many :links
+
+  before_create do |record|
+    record.password_salt     = BCrypt::Engine.generate_salt
+    record.password = BCrypt::Engine.hash_secret(record.password, record.password_salt)
+  end
 end
 
 class Token < ActiveRecord::Base
   belongs_to :user
-  def set_auth_code (params)
-    string_to_hash = params.username + params.password
-    Digest::SHA1.hexdigest(string_to_hash)[0,10]
+
+  before_create do |record|
+    string_to_hash = record.user.username + record.user.password
+    record.auth_code = Digest::SHA1.hexdigest(string_to_hash)[0,10]
   end
 end
 
@@ -67,13 +74,29 @@ end
 # Routes
 ###########################################################
 
+# before "/" do
+#   puts request.cookies['shortly']
+# end
+
+
 get '/' do
-    erb :index
+  redirect "/login" if request.cookies["shortly"] == nil
+  erb :index
 end
 
 get '/create' do
   erb :index
 end
+
+get '/login' do
+  erb :index
+end
+
+get '/logout' do
+  response.set_cookie("shortly", nil)
+  redirect "/"
+end
+
 
 get '/links' do
   # params = JSON.parse request.body.read
@@ -124,19 +147,11 @@ end
 
 post '/users/create' do
   data = JSON.parse request.body.read
-  user = User.create(data)
-  token = Token.new
-  token.auth_code = token.set_auth_code(user)
-  token.user_id = user.id
-  token.save
-
-  content_type :json
-  dataBack = {
-    auth_code: token.auth_code,
-    username: user.username,
-    created_at: token.created_at
-  }
-  dataBack.to_json
+  user = User.find_by_username(data[:username]) || User.create(data)
+  token = user.tokens.create
+  response.set_cookie("shortly", "hi")
+  puts response.inspect
+  user.to_json
 end
 
 ###########################################################
