@@ -39,11 +39,11 @@ app.controller('LinksController', function($scope, $http){
     url: "/links"
   })
   .then(function(obj){
+     console.log(obj);
     $scope.links = obj.data;
   })
   .catch(function(err, status){
-    $console.log('err', err);
-    $scope.links = 'There was an error';
+    console.log('err', err);
   });
 });
 
@@ -88,41 +88,46 @@ app.controller('FrameController', function($scope, UserService, AuthService, $lo
  };
 });
 
-app.service('UserService', function(){
+app.factory('UserService', function(){
   var currentUser = null;
-  this.getUser = function(){
-    return currentUser;
-  };
-  this.setUser = function(u){
-    currentUser = u;
+  return {
+    getUser: function(){
+      return currentUser;
+    },
+    setUser: function(u){
+      currentUser = u;
+    }
+  }
+});
+
+app.factory('AuthService', function($http, $window, $location, UserService){
+  return {
+    login: function(username, password) {
+      return $http.post('/users/create', JSON.stringify({
+        username: username,
+        password: password
+      }));
+    },
+    logout: function() {
+      UserService.setUser(null);
+      $location.path('/login');
+    }
   };
 });
 
-app.service('AuthService', function($http, $window, $location, UserService){
-  this.login = function(username, password) {
-    return $http.post('/users/create', JSON.stringify({
-      username: username,
-      password: password
-    }));
-  };
-  this.logout = function() {
-    UserService.setUser(null);
-    $location.path('/login');
-    // $window.location.href = '/login';
-  };
-});
-
-app.service('AuthInterceptor', function($location, UserService){
+app.factory('AuthInterceptor', function($location, $q, UserService){
   return {
     'request': function(request) {
-      request.token = UserService.getUser();
+      request.params = request.params || {};
+      request.params.token = request.params.token || UserService.getUser();
       return request;
     },
     'responseError': function(rejection) {
       if (rejection.status === 401) {
-        $location.path('/login');
+        console.log('401');
+        return $location.path('/login');
       }
-      return rejection;
+      return $q.reject(rejection);
     }
   };
 });

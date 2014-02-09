@@ -76,7 +76,6 @@ end
 ###########################################################
 
 get '/' do
-  redirect "/login" if request.cookies["shortly"] == nil
   erb :index
 end
 
@@ -92,17 +91,14 @@ get '/logout' do
   redirect "/"
 end
 
-before '/' do
-  if request.body.read.nil?
-  else
-    data = JSON.parse request.body.read 
-    token = Token.find_by data["token"]
-    halt 401, '401: Unauthorized Access, Please log in' if token.nil?
-  end
-end
-
 # Need to check authorization for these routes (Am I logged in?)
 
+['/links'].map do |path|
+  before path do
+      halt 401 unless current_user?
+  end
+end
+  
 get '/links' do
   links = Link.all
   links.map { |link|
@@ -124,6 +120,18 @@ get '/:url' do
   raise Sinatra::NotFound if link.nil?
   link.clicks.create!
   redirect link.url
+end
+
+post '/users/login' do 
+  data = JSON.parse request.body.read
+  user = User.find_by_username(data["username"])
+  if user.nil? 
+    response.status 418
+    response.body '418: User not found'
+  else 
+    token = user.tokens.create
+    user.tokens.last.to_json
+  end
 end
 
 post '/users/create' do
@@ -154,4 +162,13 @@ def get_url_title url
     # Nokogiri::HTML.parse( read_url_head url ).title
     result = read_url_head(url).match(/<title>(.*)<\/title>/)
     result.nil? ? "" : result[1]
+end
+
+def current_user?
+  c_t = current_token
+  c_t && !!c_t.user
+end
+
+def current_token
+  Token.find_by_auth_code params[:token]
 end

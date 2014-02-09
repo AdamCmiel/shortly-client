@@ -7,8 +7,8 @@
   <button ng-click="reverse=false">&#8593;</button>
   <button ng-click="reverse=true">&#8595;</button>
   <ul>
-    <li ng-repeat="link in links | filter: search | orderBy:orderBy:reverse" >
-      <a ng-href="/{{link.code}}">
+    <li ng-repeat="link in links | filter: search | orderBy:orderBy:reverse track by $index" >
+      <a href="/{{link.code}}" target="_self">
         /{{link.code}}
       </a>
       {{link.title}}
