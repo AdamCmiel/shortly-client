@@ -4,4 +4,11 @@
     Password: <input type="password" placeholder="enter your password..." ng-model="user.password" />
               <input type="submit" value="Log In">
   </form>
+
+  <form ng-submit="logIn()">
+    <label>Create User</label>
+    Email: <input type="email" placeholder="enter your email..." ng-model="user.username" />
+    Password: <input type="password" placeholder="enter your password..." ng-model="user.password" />
+              <input type="submit" value="Register">
+  </form>
 </div>

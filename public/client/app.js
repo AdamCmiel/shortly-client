@@ -1,6 +1,6 @@
 // ------------ Write and expose app ------------ //
 
-var app = angular.module("ShortlyApp", ['ngRoute']);
+var app = angular.module("ShortlyApp", ['ngRoute', 'ngCookies']);
 
 // --------------- Do some stuff ---------------- //
 
@@ -88,14 +88,13 @@ app.controller('FrameController', function($scope, UserService, AuthService, $lo
  };
 });
 
-app.factory('UserService', function(){
-  var currentUser = null;
+app.factory('UserService', function($cookies){
   return {
     getUser: function(){
-      return currentUser;
+      return $cookies.currentUser;
     },
     setUser: function(u){
-      currentUser = u;
+      $cookies.currentUser = u;
     }
   }
 });
@@ -109,8 +108,15 @@ app.factory('AuthService', function($http, $window, $location, UserService){
       }));
     },
     logout: function() {
-      UserService.setUser(null);
-      $location.path('/login');
+      $http.delete('/users/logout')
+      .then(function(obj){
+        console.log(obj);
+        UserService.setUser(null);
+        $location.path('/login');
+      })
+      .catch(function(err){
+        console.log('err', err);
+      });
     }
   };
 });

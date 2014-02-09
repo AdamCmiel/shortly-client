@@ -1,5 +1,6 @@
 angular/
 angular-route/
+angular-cookies/
 *.swp
 npm-debug.log
 node_modules/

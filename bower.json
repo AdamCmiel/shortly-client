@@ -15,6 +15,10 @@
   ],
   "dependencies": {
     "angular": "~1.2.11",
-    "angular-route": "~1.2.11"
+    "angular-route": "~1.2.11",
+    "angular-cookies": "~1.2.12"
+  },
+  "resolutions": {
+    "angular": "1.2.13-build.2242+sha.e645f7c"
   }
 }

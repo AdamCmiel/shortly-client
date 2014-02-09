@@ -141,6 +141,12 @@ post '/users/create' do
   user.tokens.last.to_json 
 end
 
+delete '/users/logout' do
+  auth_code = params[:token]
+  Token.where(auth_code: auth_code).destroy_all
+  redirect '/login'
+end
+
 ###########################################################
 # Utility
 ###########################################################
